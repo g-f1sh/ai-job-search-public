@@ -42,7 +42,7 @@ class PortalUIEventLifecycleTests(unittest.TestCase):
             result = subprocess.run(
                 ["node", str(Path(__file__).with_name("portal_browser_smoke.cjs"))],
                 input=json.dumps({"chrome": chrome, "profile": profile, "html": PORTAL_HTML}),
-                text=True, capture_output=True, timeout=30, check=False,
+                text=True, capture_output=True, timeout=90, check=False,
             )
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)

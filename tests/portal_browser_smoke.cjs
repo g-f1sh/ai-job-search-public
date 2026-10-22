@@ -20,7 +20,14 @@ const endpoint = new Promise((resolve, reject) => {
 function request(method, params = {}, sessionId) {
   const id = ++sequence;
   return new Promise((resolve, reject) => {
-    pending.set(id, {resolve, reject});
+    const timeout = setTimeout(() => {
+      pending.delete(id);
+      reject(new Error(`Browser command timed out: ${method}`));
+    }, 20000);
+    pending.set(id, {
+      resolve: value => { clearTimeout(timeout); resolve(value); },
+      reject: error => { clearTimeout(timeout); reject(error); },
+    });
     socket.send(JSON.stringify({id, method, params, ...(sessionId ? {sessionId} : {})}));
   });
 }
