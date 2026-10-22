@@ -3,6 +3,8 @@ const {spawn} = require('node:child_process');
 const fs = require('node:fs');
 const input = JSON.parse(fs.readFileSync(0, 'utf8'));
 const chrome = spawn(input.chrome, ['--headless', '--no-sandbox', '--disable-gpu',
+  '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
+  '--disable-backgrounding-occluded-windows',
   '--remote-debugging-port=0', `--user-data-dir=${input.profile}`, 'about:blank'],
   {stdio: ['ignore', 'ignore', 'pipe']});
 let socket;
@@ -50,6 +52,7 @@ async function evaluate(session, expression) {
   const {targetId} = await request('Target.createTarget', {url: 'about:blank'});
   const {sessionId: session} = await request('Target.attachToTarget', {targetId, flatten: true});
   await request('Page.enable', {}, session);
+  await request('Page.bringToFront', {}, session);
   await request('Page.addScriptToEvaluateOnNewDocument', {source: `
     window.streams=[];
     window.mockRun=null;
@@ -211,8 +214,15 @@ async function evaluate(session, expression) {
       return {mobile:false,width:innerWidth,height:innerHeight,cards:mockJobs.length,x:rect.left+80,y:rect.top+100};
     })()`);
     if(setup.mobile){kanbanReports.push(setup);continue;}
+    // Wait for the resized viewport to reach the compositor before hit-testing.
+    await evaluate(session, 'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');
+    await request('Input.dispatchMouseEvent',{type:'mouseMoved',x:setup.x,y:setup.y},session);
     await request('Input.dispatchMouseEvent',{type:'mouseWheel',x:setup.x,y:setup.y,deltaX:0,deltaY:180},session);
-    await new Promise(resolve=>setTimeout(resolve,100));
+    await evaluate(session, `(async()=>{
+      const deadline=Date.now()+3000;
+      while($('kanban').querySelector('.column-list').scrollTop<=320&&Date.now()<deadline)
+        await new Promise(resolve=>requestAnimationFrame(resolve));
+    })()`);
     const report=await evaluate(session,`(async()=>{
       function check(value,message){if(!value)throw new Error(message)}
       const board=$('kanban'),columns=[...board.querySelectorAll('.column')],first=columns[0].querySelector('.column-list');
