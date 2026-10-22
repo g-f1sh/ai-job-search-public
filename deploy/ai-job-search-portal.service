@@ -1,0 +1,25 @@
+[Unit]
+Description=AI Job Search mobile portal and background worker
+After=default.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/jobsearch/ai-job-search
+EnvironmentFile=-/home/jobsearch/.config/ai-job-search/portal.env
+Environment=PATH=/home/jobsearch/.nvm/versions/node/v22.23.1/bin:/home/jobsearch/.bun/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONPATH=/home/jobsearch/ai-job-search/portal_data/python
+ExecStart=/usr/bin/python3 /home/jobsearch/ai-job-search/tools/cv_webview.py --repo /home/jobsearch/ai-job-search --host 127.0.0.1 --port 8765
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=15
+KillMode=mixed
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/jobsearch/ai-job-search /home/jobsearch/.codex
+UMask=0077
+
+[Install]
+WantedBy=default.target

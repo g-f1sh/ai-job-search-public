@@ -1,0 +1,2 @@
+# Optional portable PDF validation/rendering when Poppler is unavailable.
+PyMuPDF==1.26.7

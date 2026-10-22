@@ -1,0 +1,10 @@
+# Add this entry before the final `http_status:404` rule in /etc/cloudflared/config.yml.
+# Keep the portal bound to 127.0.0.1; cloudflared is the only network-facing hop.
+ingress:
+  - hostname: jobs.example.com
+    service: http://127.0.0.1:8765
+    originRequest:
+      connectTimeout: 10s
+      noHappyEyeballs: false
+
+  - service: http_status:404
