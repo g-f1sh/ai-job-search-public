@@ -2,6 +2,8 @@
 
 Step-by-step instructions for getting the AI Job Search framework running.
 
+Before adding your personal profile, follow the [private working-copy instructions](README.md#1-create-a-private-working-copy). Keep your personalized origin private. A public framework fork should contain only placeholders and fictional examples.
+
 ## 1. Prerequisites
 
 ### Claude Code

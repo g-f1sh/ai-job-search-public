@@ -12,7 +12,7 @@
 
 [![CI](https://github.com/g-f1sh/ai-job-search-public/actions/workflows/ci.yml/badge.svg)](https://github.com/g-f1sh/ai-job-search-public/actions/workflows/ci.yml)
 
-An AI-powered job application framework built on [Claude Code](https://claude.com/claude-code). Fork it, fill in your profile, and let Claude evaluate job postings, tailor your CV, write cover letters, and prepare you for interviews.
+An AI-powered job application framework built on [Claude Code](https://claude.com/claude-code). Create a private working copy, fill in your profile, and let Claude evaluate job postings, tailor your CV, write cover letters, and prepare you for interviews.
 
 > Note: This is an independent open-source project and is not affiliated with, endorsed by, sponsored by, or maintained by Anthropic. Anthropic and Claude Code are referenced only to describe the toolchain this workflow uses.
 >
@@ -56,12 +56,16 @@ The framework encodes career guidance best practices, including structured evalu
 
 ## Quick start
 
-### 1. Fork and clone
+### 1. Create a private working copy
 
 ```bash
-gh repo fork g-f1sh/ai-job-search-public --clone
-cd ai-job-search-public
+gh repo clone g-f1sh/ai-job-search-public my-job-search
+cd my-job-search
+git remote rename origin upstream
+gh repo create my-job-search --private --source . --remote origin --push
 ```
+
+The final command creates a private repository under your authenticated GitHub account. Choose a different repository name if that name already exists. Confirm the new origin is private before running `/setup`; a public fork is appropriate for framework contributions, not personal application data.
 
 ### 2. Install job search tools
 
